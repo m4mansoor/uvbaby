@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BabySafe UV Checker</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ... (all the existing CSS styles remain the same) ... */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Marker Felt', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4, #a1c4fd);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 30px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 900px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            border: 8px solid #ffb6c1;
+        }
+        
+        .header {
+            position: relative;
+            margin-bottom: 25px;
+        }
+        
+        h1 {
+            color: #ff6b6b;
+            font-size: 42px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: bounce 2s infinite;
+        }
+        
+        .subtitle {
+            color: #6a5acd;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .baby-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .baby-graphic {
+            width: 100px;
+            height: 100px;
+            background: #ffd1dc;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        .baby-face {
+            position: relative;
+            width: 70px;
+            height: 70px;
+        }
+        
+        .eye {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            background: #333;
+            border-radius: 50%;
+            top: 25px;
+        }
+        
+        .eye.left {
+            left: 15px;
+        }
+        
+        .eye.right {
+            right: 15px;
+        }
+        
+        .mouth {
+            position: absolute;
+            width: 30px;
+            height: 15px;
+            border-bottom: 3px solid #ff6b6b;
+            border-radius: 0 0 50% 50%;
+            bottom: 15px;
+            left: 20px;
+        }
+        
+        .location-section {
+            background: linear-gradient(135deg, #a1c4fd, #c2e9fb);
+            border-radius: 25px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            position: relative;
+            overflow: hidden;
+            border: 4px dashed #ffb6c1;
+        }
+        
+        .location-section::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #a1c4fd, #c2e9fb);
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.7;
+        }
+        
+        .location-title {
+            color: #ff6b6b;
+            font-size: 28px;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .location-btn {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 50px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            transition: all 0.4s ease;
+            width: 100%;
+            max-width: 350px;
+            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .location-btn:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 12px 25px rgba(255, 107, 107, 0.6);
+        }
+        
+        .location-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        .location-btn i {
+            margin-right: 15px;
+            font-size: 24px;
+        }
+        
+        .manual-location {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        input {
+            padding: 16px 20px;
+            border: 3px solid #ffb6c1;
+            border-radius: 15px;
+            font-size: 18px;
+            transition: all 0.3s;
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        input:focus {
+            border-color: #ff6b6b;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.3);
+            transform: scale(1.02);
+        }
+        
+        .check-btn {
+            background: linear-gradient(45deg, #43e97b, #38f9d7);
+            color: white;
+            border: none;
+            padding: 18px;
+            border-radius: 15px;
+            font-size: 22px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            margin-top: 10px;
+            box-shadow: 0 8px 20px rgba(67, 233, 123, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .check-btn:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 12px 25px rgba(67, 233, 123, 0.6);
+        }
+        
+        .check-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+        
+        .result-section {
+            background: linear-gradient(135deg, #ffecd2, #fcb69f);
+            border-radius: 25px;
+            padding: 30px;
+            margin-top: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: none;
+            position: relative;
+            overflow: hidden;
+            border: 4px dashed #ffb6c1;
+        }
+        
+        .result-section::before {
+            content: "";
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            background: linear-gradient(45deg, #ffecd2, #fcb69f, #ff9a9e, #fad0c4);
+            z-index: -1;
+            filter: blur(20px);
+            opacity: 0.7;
+        }
+        
+        .location-display {
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff6b6b;
+            margin: 15px 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .uv-display {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin: 25px 0;
+        }
+        
+        .uv-index {
+            font-size: 80px;
+            font-weight: 900;
+            margin: 0;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.2);
+            animation: pulse 2s infinite;
+        }
+        
+        .uv-level {
+            font-size: 32px;
+            font-weight: bold;
+            margin: 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .low { color: #43e97b; }
+        .moderate { color: #f9d423; }
+        .high { color: #ff9a44; }
+        .very-high { color: #ff6b6b; }
+        .extreme { color: #8e44ad; }
+        
+        .safety-advice {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 25px;
+            text-align: left;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            border: 3px solid #ffb6c1;
+        }
+        
+        .safety-advice h3 {
+            color: #ff6b6b;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 26px;
+        }
+        
+        .advice-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 15px;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+        }
+        
+        .advice-item:hover {
+            transform: translateX(10px);
+            background: #fff5f7;
+        }
+        
+        .advice-item i {
+            color: #ff6b6b;
+            font-size: 24px;
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+        
+        .error {
+            color: #e74c3c;
+            background: #fadbd8;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 25px 0;
+            display: none;
+            font-size: 18px;
+            font-weight: bold;
+            border: 3px solid #e74c3c;
+            animation: shake 0.5s;
+        }
+        
+        .loading {
+            display: none;
+            margin: 30px 0;
+        }
+        
+        .spinner {
+            border: 6px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 6px solid #ff6b6b;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        .loading-text {
+            font-size: 22px;
+            color: #ff6b6b;
+            font-weight: bold;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            color: #6a5acd;
+            font-size: 16px;
+            font-weight: bold;
+        }
+        
+        .bubbles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        
+        .bubble {
+            position: absolute;
+            bottom: -100px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: bubble 15s infinite ease-in;
+        }
+        
+        .bubble:nth-child(1) {
+            width: 40px;
+            height: 40px;
+            left: 10%;
+            animation-duration: 18s;
+        }
+        
+        .bubble:nth-child(2) {
+            width: 20px;
+            height: 20px;
+            left: 20%;
+            animation-duration: 12s;
+            animation-delay: 1s;
+        }
+        
+        .bubble:nth-child(3) {
+            width: 50px;
+            height: 50px;
+            left: 35%;
+            animation-duration: 16s;
+            animation-delay: 2s;
+        }
+        
+        .bubble:nth-child(4) {
+            width: 80px;
+            height: 80px;
+            left: 50%;
+            animation-duration: 22s;
+            animation-delay: 0s;
+        }
+        
+        .bubble:nth-child(5) {
+            width: 35px;
+            height: 35px;
+            left: 55%;
+            animation-duration: 15s;
+            animation-delay: 1s;
+        }
+        
+        .bubble:nth-child(6) {
+            width: 45px;
+            height: 45px;
+            left: 65%;
+            animation-duration: 14s;
+            animation-delay: 0.5s;
+        }
+        
+        .bubble:nth-child(7) {
+            width: 25px;
+            height: 25px;
+            left: 75%;
+            animation-duration: 17s;
+            animation-delay: 2.5s;
+        }
+        
+        .bubble:nth-child(8) {
+            width: 80px;
+            height: 80px;
+            left: 80%;
+            animation-duration: 20s;
+            animation-delay: 1.5s;
+        }
+        
+        .bubble:nth-child(9) {
+            width: 15px;
+            height: 15px;
+            left: 70%;
+            animation-duration: 12s;
+            animation-delay: 2s;
+        }
+        
+        .bubble:nth-child(10) {
+            width: 50px;
+            height: 50px;
+            left: 85%;
+            animation-duration: 16s;
+            animation-delay: 0s;
+        }
+        
+        /* Animations */
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+        }
+        
+        @keyframes bubble {
+            0% {
+                bottom: -100px;
+                transform: translateX(0);
+            }
+            50% {
+                transform: translateX(100px);
+            }
+            100% {
+                bottom: 1080px;
+                transform: translateX(-200px);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 32px;
+            }
+            
+            .subtitle {
+                font-size: 18px;
+            }
+            
+            .location-title {
+                font-size: 24px;
+            }
+            
+            .uv-index {
+                font-size: 60px;
+            }
+            
+            .uv-level {
+                font-size: 26px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="bubbles">
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+        </div>
+        
+        <div class="header">
+            <div class="baby-header">
+                <div class="baby-graphic">
+                    <div class="baby-face">
+                        <div class="eye left"></div>
+                        <div class="eye right"></div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+                <h1>BabySafe UV Checker</h1>
+                <div class="baby-graphic">
+                    <div class="baby-face">
+                        <div class="eye left"></div>
+                        <div class="eye right"></div>
+                        <div class="mouth"></div>
+                    </div>
+                </div>
+            </div>
+            <p class="subtitle">Check if it's safe for your newborn to be in direct sunlight</p>
+        </div>
+        
+        <div class="location-section">
+            <h2 class="location-title"><i class="fas fa-map-marker-alt"></i> Where are you?</h2>
+            <button class="location-btn" id="getLocationBtn">
+                <i class="fas fa-location-arrow"></i> Use My Current Location
+            </button>
+            
+            <div class="manual-location">
+                <input type="text" id="cityInput" placeholder="Enter city name (e.g. New York)">
+                <input type="text" id="countryInput" placeholder="Enter country code (e.g. US)">
+                <button class="check-btn" id="checkBtn">Check UV Index</button>
+            </div>
+        </div>
+        
+        <div class="error" id="error"></div>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <div class="loading-text">Checking UV index for your baby...</div>
+        </div>
+        
+        <div class="result-section" id="resultSection">
+            <div class="location-display" id="locationDisplay"></div>
+            
+            <div class="uv-display">
+                <div class="uv-index" id="uvIndex">0.0</div>
+                <div class="uv-level" id="uvLevel">Low</div>
+            </div>
+            
+            <div class="safety-advice">
+                <h3>For Your Newborn:</h3>
+                <div class="advice-item">
+                    <i class="fas fa-baby"></i>
+                    <div id="safetyAdvice">Generally safe for newborns with minimal exposure. Still, protect with shade and clothing.</div>
+                </div>
+                <div class="advice-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <div>Protect your baby with shade, protective clothing, and sunscreen if over 6 months old</div>
+                </div>
+                <div class="advice-item">
+                    <i class="fas fa-clock"></i>
+                    <div>Avoid direct sunlight between 10 AM and 4 PM when UV is strongest</div>
+                </div>
+                <div class="advice-item">
+                    <i class="fas fa-umbrella-beach"></i>
+                    <div>Use a stroller with UV protection or create shade with a blanket</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Made with ❤️ for your little ones | UV data provided by our backend</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const getLocationBtn = document.getElementById('getLocationBtn');
+            const checkBtn = document.getElementById('checkBtn');
+            const cityInput = document.getElementById('cityInput');
+            const countryInput = document.getElementById('countryInput');
+            const resultSection = document.getElementById('resultSection');
+            const uvIndexElement = document.getElementById('uvIndex');
+            const uvLevelElement = document.getElementById('uvLevel');
+            const safetyAdviceElement = document.getElementById('safetyAdvice');
+            const errorElement = document.getElementById('error');
+            const loadingElement = document.getElementById('loading');
+            const locationDisplayElement = document.getElementById('locationDisplay');
+            
+            // ========================
+            // PLACE YOUR API KEY HERE
+            // ========================
+            const API_KEY = 'YOUR_API_KEY_HERE'; // <<<< REPLACE THIS WITH YOUR ACTUAL API KEY
+            // Example: const API_KEY = 'abc123def456ghi789';
+            
+            // Event listeners
+            getLocationBtn.addEventListener('click', getLocation);
+            checkBtn.addEventListener('click', checkUVIndex);
+            
+            // Get user's current location
+            function getLocation() {
+                if (navigator.geolocation) {
+                    showLoading(true);
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            const lat = position.coords.latitude;
+                            const lon = position.coords.longitude;
+                            fetchUVDataByCoords(lat, lon);
+                        },
+                        error => {
+                            showError('Unable to retrieve your location. Please enter location manually.');
+                            showLoading(false);
+                        }
+                    );
+                } else {
+                    showError('Geolocation is not supported by this browser.');
+                }
+            }
+            
+            // Check UV index with manual location
+            function checkUVIndex() {
+                const city = cityInput.value.trim();
+                const country = countryInput.value.trim();
+                
+                if (!city) {
+                    showError('Please enter a city name');
+                    return;
+                }
+                
+                showLoading(true);
+                fetchUVDataByCity(city, country);
+            }
+            
+            // Fetch UV data by coordinates using OpenWeatherMap
+            function fetchUVDataByCoords(lat, lon) {
+                const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+                
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Failed to fetch UV data');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Extract UV index from response (OpenWeatherMap includes it in current weather)
+                        const uvIndex = data.uvi || 0;
+                        displayResult(uvIndex, data.name, data.sys.country);
+                    })
+                    .catch(error => {
+                        showError('Error fetching UV data. Please try again later.');
+                        console.error('Error:', error);
+                        showLoading(false);
+                    });
+            }
+            
+            // Fetch UV data by city name
+            function fetchUVDataByCity(city, country) {
+                let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}`;
+                if (country) {
+                    url += `,${country}`;
+                }
+                url += `&appid=${API_KEY}&units=metric`;
+                
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('City not found');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        const uvIndex = data.uvi || 0;
+                        const cityName = data.name;
+                        const countryName = data.sys.country;
+                        displayResult(uvIndex, cityName, countryName);
+                    })
+                    .catch(error => {
+                        showError('City not found. Please check the name and try again.');
+                        showLoading(false);
+                    });
+            }
+            
+            // Display the result
+            function displayResult(uvIndex, cityName, countryName) {
+                // Determine UV level and advice
+                let level, advice, colorClass;
+                
+                if (uvIndex <= 2) {
+                    level = "Low";
+                    advice = "Generally safe for newborns with minimal exposure. Still, protect with shade and clothing.";
+                    colorClass = "low";
+                } else if (uvIndex <= 5) {
+                    level = "Moderate";
+                    advice = "Take precautions. Limit direct sun exposure. Keep baby in shade when possible.";
+                    colorClass = "moderate";
+                } else if (uvIndex <= 7) {
+                    level = "High";
+                    advice = "Protection required. Avoid direct sun exposure. Keep baby in complete shade.";
+                    colorClass = "high";
+                } else if (uvIndex <= 10) {
+                    level = "Very High";
+                    advice = "Extra protection needed. Avoid direct sunlight completely. Stay indoors if possible.";
+                    colorClass = "very-high";
+                } else {
+                    level = "Extreme";
+                    advice = "Dangerous UV levels. Keep baby indoors. No direct sun exposure at all.";
+                    colorClass = "extreme";
+                }
+                
+                // Update UI
+                locationDisplayElement.textContent = `${cityName}, ${countryName}`;
+                uvIndexElement.textContent = uvIndex.toFixed(1);
+                uvIndexElement.className = `uv-index ${colorClass}`;
+                uvLevelElement.textContent = level;
+                uvLevelElement.className = `uv-level ${colorClass}`;
+                safetyAdviceElement.textContent = advice;
+                
+                // Show result section
+                resultSection.style.display = 'block';
+                showLoading(false);
+                
+                // Add animation to result
+                resultSection.animate([
+                    { transform: 'scale(0.8)', opacity: 0 },
+                    { transform: 'scale(1.05)', opacity: 1 },
+                    { transform: 'scale(1)', opacity: 1 }
+                ], {
+                    duration: 600,
+                    easing: 'ease-out'
+                });
+                
+                // Scroll to results
+                resultSection.scrollIntoView({ behavior: 'smooth' });
+            }
+            
+            // Show/hide loading indicator
+            function showLoading(show) {
+                if (show) {
+                    loadingElement.style.display = 'block';
+                    resultSection.style.display = 'none';
+                    errorElement.style.display = 'none';
+                } else {
+                    loadingElement.style.display = 'none';
+                }
+            }
+            
+            // Show error message
+            function showError(message) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+                resultSection.style.display = 'none';
+                showLoading(false);
+            }
+            
+            // Add floating animation to baby graphics
+            const babyGraphics = document.querySelectorAll('.baby-graphic');
+            babyGraphics.forEach((graphic, index) => {
+                graphic.style.animationDelay = `${index * 0.5}s`;
+            });
+        });
+    </script>
+</body>
+</html>
