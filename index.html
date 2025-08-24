@@ -372,17 +372,18 @@
             }
         }
         
-        /* Baby Graphics */
+        /* Modern Baby Character */
         .baby-graphic {
             position: relative;
             width: 100%;
-            height: 120px;
+            height: 140px;
             margin: 20px 0;
             display: flex;
             justify-content: center;
+            align-items: center;
         }
         
-        .baby-body {
+        .modern-baby {
             position: relative;
             width: 80px;
             height: 100px;
@@ -392,9 +393,10 @@
             justify-content: center;
             align-items: center;
             box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
         }
         
-        .baby-head {
+        .modern-baby-head {
             position: absolute;
             top: -40px;
             width: 60px;
@@ -406,33 +408,32 @@
             align-items: center;
         }
         
-        .baby-eye {
-            position: absolute;
-            width: 12px;
-            height: 12px;
+        .modern-baby-eyes {
+            display: flex;
+            justify-content: space-around;
+            width: 40px;
+            margin-top: 15px;
+        }
+        
+        .modern-baby-eye {
+            width: 10px;
+            height: 10px;
             background: #333;
             border-radius: 50%;
-            top: 20px;
+            transition: all 0.3s ease;
         }
         
-        .baby-eye.left {
-            left: 15px;
-        }
-        
-        .baby-eye.right {
-            right: 15px;
-        }
-        
-        .baby-mouth {
-            position: absolute;
+        .modern-baby-mouth {
             width: 25px;
             height: 10px;
             border-bottom: 2px solid #ff6b6b;
             border-radius: 0 0 50% 50%;
-            bottom: 15px;
+            margin-top: 10px;
+            transition: all 0.3s ease;
         }
         
-        .sun-rays {
+        /* Sun Rays */
+        .sun-radiation {
             position: absolute;
             width: 150px;
             height: 150px;
@@ -468,6 +469,47 @@
             width: 0%;
             border-radius: 5px;
             transition: width 1s ease-in-out;
+        }
+        
+        /* Animated Background Elements */
+        .floating-cloud {
+            position: absolute;
+            width: 80px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            animation: floatCloud 10s infinite linear;
+            z-index: -1;
+        }
+        
+        .floating-cloud:nth-child(1) {
+            top: 20px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        
+        .floating-cloud:nth-child(2) {
+            top: 40px;
+            left: 30%;
+            animation-delay: 2s;
+        }
+        
+        .floating-cloud:nth-child(3) {
+            top: 60px;
+            left: 50%;
+            animation-delay: 4s;
+        }
+        
+        .floating-cloud:nth-child(4) {
+            top: 80px;
+            left: 70%;
+            animation-delay: 6s;
+        }
+        
+        @keyframes floatCloud {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100px); }
         }
     </style>
 </head>
@@ -507,12 +549,14 @@
             <div class="location-display" id="locationDisplay">New York, US</div>
             
             <div class="baby-graphic">
-                <div class="sun-rays"></div>
-                <div class="baby-body">
-                    <div class="baby-head">
-                        <div class="baby-eye left"></div>
-                        <div class="baby-eye right"></div>
-                        <div class="baby-mouth"></div>
+                <div class="sun-radiation"></div>
+                <div class="modern-baby">
+                    <div class="modern-baby-head">
+                        <div class="modern-baby-eyes">
+                            <div class="modern-baby-eye"></div>
+                            <div class="modern-baby-eye"></div>
+                        </div>
+                        <div class="modern-baby-mouth"></div>
                     </div>
                 </div>
             </div>
@@ -565,6 +609,10 @@
             
             // Replace with your OpenWeatherMap API key
             const API_KEY = 'ee24c0e698aa7bd4d929b21821e318f9'; // <<<< REPLACE THIS WITH YOUR ACTUAL API KEY
+            
+            // Get the baby mouth element
+            const babyMouth = document.querySelector('.modern-baby-mouth');
+            const babyEyes = document.querySelectorAll('.modern-baby-eye');
             
             // Event listeners
             getLocationBtn.addEventListener('click', getLocation);
@@ -657,28 +705,38 @@
             // Display the result
             function displayResult(uvIndex, cityName, countryName) {
                 // Determine UV level and advice
-                let level, advice, colorClass;
+                let level, advice, colorClass, mouthRotation, eyeColor;
                 
                 if (uvIndex <= 2) {
                     level = "Low";
                     advice = "Generally safe for newborns with minimal exposure. Still, protect with shade and clothing.";
                     colorClass = "low";
+                    mouthRotation = 0;
+                    eyeColor = "#333";
                 } else if (uvIndex <= 5) {
                     level = "Moderate";
                     advice = "Take precautions. Limit direct sun exposure. Keep baby in shade when possible.";
                     colorClass = "moderate";
+                    mouthRotation = 10;
+                    eyeColor = "#333";
                 } else if (uvIndex <= 7) {
                     level = "High";
                     advice = "Protection required. Avoid direct sun exposure. Keep baby in complete shade.";
                     colorClass = "high";
+                    mouthRotation = 20;
+                    eyeColor = "#333";
                 } else if (uvIndex <= 10) {
                     level = "Very High";
                     advice = "Extra protection needed. Avoid direct sunlight completely. Stay indoors if possible.";
                     colorClass = "very-high";
+                    mouthRotation = 30;
+                    eyeColor = "#333";
                 } else {
                     level = "Extreme";
                     advice = "Dangerous UV levels. Keep baby indoors. No direct sun exposure at all.";
                     colorClass = "extreme";
+                    mouthRotation = 45;
+                    eyeColor = "#333";
                 }
                 
                 // Update UI
@@ -692,6 +750,38 @@
                 // Animate progress bar
                 const progressPercentage = Math.min(100, uvIndex * 8.33); // Scale to 12 max
                 progressBar.style.width = `${progressPercentage}%`;
+                
+                // Update baby expression
+                babyMouth.style.transform = `rotate(${mouthRotation}deg)`;
+                babyEyes.forEach(eye => {
+                    eye.style.background = eyeColor;
+                });
+                
+                // Change baby body color based on UV level
+                const babyBody = document.querySelector('.modern-baby');
+                const babyHead = document.querySelector('.modern-baby-head');
+                switch(colorClass) {
+                    case 'low':
+                        babyBody.style.backgroundColor = '#ffd1dc';
+                        babyHead.style.backgroundColor = '#ffd1dc';
+                        break;
+                    case 'moderate':
+                        babyBody.style.backgroundColor = '#ffe5e5';
+                        babyHead.style.backgroundColor = '#ffe5e5';
+                        break;
+                    case 'high':
+                        babyBody.style.backgroundColor = '#ffb6c1';
+                        babyHead.style.backgroundColor = '#ffb6c1';
+                        break;
+                    case 'very-high':
+                        babyBody.style.backgroundColor = '#ffcccc';
+                        babyHead.style.backgroundColor = '#ffcccc';
+                        break;
+                    case 'extreme':
+                        babyBody.style.backgroundColor = '#ffcccb';
+                        babyHead.style.backgroundColor = '#ffcccb';
+                        break;
+                }
                 
                 // Show result section
                 resultSection.style.display = 'block';
@@ -740,6 +830,14 @@
                     element.style.transform = 'scale(1)';
                 });
             });
+            
+            // Add floating clouds
+            const container = document.querySelector('.container');
+            for (let i = 1; i <= 4; i++) {
+                const cloud = document.createElement('div');
+                cloud.classList.add('floating-cloud');
+                container.appendChild(cloud);
+            }
         });
     </script>
 </body>
