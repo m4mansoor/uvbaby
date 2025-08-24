@@ -372,6 +372,14 @@
             }
         }
         
+        /* Emoji Display */
+        .emoji-display {
+            font-size: 80px;
+            margin: 20px 0;
+            text-align: center;
+            animation: bounce 2s infinite;
+        }
+        
         /* Baby Character */
         .baby-character {
             position: relative;
@@ -570,18 +578,7 @@
         <div class="result-section" id="resultSection">
             <div class="location-display" id="locationDisplay">New York, US</div>
             
-            <div class="baby-character">
-                <div class="sun-radiation"></div>
-                <div class="baby-body">
-                    <div class="baby-head">
-                        <div class="baby-face">
-                            <div class="baby-eye left"></div>
-                            <div class="baby-eye right"></div>
-                            <div class="baby-mouth"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <div class="emoji-display" id="emojiDisplay">😊</div>
             
             <div class="uv-display">
                 <div class="uv-index" id="uvIndex">0.0</div>
@@ -610,7 +607,7 @@
         </div>
         
         <div class="footer">
-            <h3>Inaamul Haq Mansoor</h3>
+            <h3>By Inaamul Haq Mansoor</h3>
             <p>Made with ❤️ for your little ones</p>
         </div>
     </div>
@@ -629,13 +626,10 @@
             const loadingElement = document.getElementById('loading');
             const locationDisplayElement = document.getElementById('locationDisplay');
             const progressBar = document.getElementById('progressBar');
+            const emojiDisplay = document.getElementById('emojiDisplay');
             
             // Replace with your OpenWeatherMap API key
             const API_KEY = 'ee24c0e698aa7bd4d929b21821e318f9'; // <<<< REPLACE THIS WITH YOUR ACTUAL API KEY
-            
-            // Get the baby mouth element
-            const babyMouth = document.querySelector('.baby-mouth');
-            const babyEyes = document.querySelectorAll('.baby-eye');
             
             // Event listeners
             getLocationBtn.addEventListener('click', getLocation);
@@ -728,38 +722,38 @@
             // Display the result
             function displayResult(uvIndex, cityName, countryName) {
                 // Determine UV level and advice
-                let level, advice, colorClass, mouthRotation, eyeColor;
+                let level, advice, colorClass, emoji, statusText;
                 
                 if (uvIndex <= 2) {
                     level = "Low";
                     advice = "Generally safe for newborns with minimal exposure. Still, protect with shade and clothing.";
                     colorClass = "low";
-                    mouthRotation = 0;
-                    eyeColor = "#333";
+                    emoji = "😊"; // Happy face
+                    statusText = "Healthy";
                 } else if (uvIndex <= 5) {
                     level = "Moderate";
                     advice = "Take precautions. Limit direct sun exposure. Keep baby in shade when possible.";
                     colorClass = "moderate";
-                    mouthRotation = 10;
-                    eyeColor = "#333";
+                    emoji = "🙂"; // Slightly smiling face
+                    statusText = "Safe";
                 } else if (uvIndex <= 7) {
                     level = "High";
                     advice = "Protection required. Avoid direct sun exposure. Keep baby in complete shade.";
                     colorClass = "high";
-                    mouthRotation = 20;
-                    eyeColor = "#333";
+                    emoji = "😐"; // Neutral face
+                    statusText = "Unsafe";
                 } else if (uvIndex <= 10) {
                     level = "Very High";
                     advice = "Extra protection needed. Avoid direct sunlight completely. Stay indoors if possible.";
                     colorClass = "very-high";
-                    mouthRotation = 30;
-                    eyeColor = "#333";
+                    emoji = "😟"; // Worried face
+                    statusText = "Bad";
                 } else {
                     level = "Extreme";
                     advice = "Dangerous UV levels. Keep baby indoors. No direct sun exposure at all.";
                     colorClass = "extreme";
-                    mouthRotation = 45;
-                    eyeColor = "#333";
+                    emoji = "😨"; // Fearful face
+                    statusText = "Worst";
                 }
                 
                 // Update UI
@@ -769,42 +763,12 @@
                 uvLevelElement.textContent = level;
                 uvLevelElement.className = `uv-level ${colorClass}`;
                 safetyAdviceElement.textContent = advice;
+                emojiDisplay.textContent = emoji;
+                emojiDisplay.title = statusText;
                 
                 // Animate progress bar
                 const progressPercentage = Math.min(100, uvIndex * 8.33); // Scale to 12 max
                 progressBar.style.width = `${progressPercentage}%`;
-                
-                // Update baby expression
-                babyMouth.style.transform = `rotate(${mouthRotation}deg)`;
-                babyEyes.forEach(eye => {
-                    eye.style.background = eyeColor;
-                });
-                
-                // Change baby body color based on UV level
-                const babyBody = document.querySelector('.baby-body');
-                const babyHead = document.querySelector('.baby-head');
-                switch(colorClass) {
-                    case 'low':
-                        babyBody.style.backgroundColor = '#ffd1dc';
-                        babyHead.style.backgroundColor = '#ffd1dc';
-                        break;
-                    case 'moderate':
-                        babyBody.style.backgroundColor = '#ffe5e5';
-                        babyHead.style.backgroundColor = '#ffe5e5';
-                        break;
-                    case 'high':
-                        babyBody.style.backgroundColor = '#ffb6c1';
-                        babyHead.style.backgroundColor = '#ffb6c1';
-                        break;
-                    case 'very-high':
-                        babyBody.style.backgroundColor = '#ffcccc';
-                        babyHead.style.backgroundColor = '#ffcccc';
-                        break;
-                    case 'extreme':
-                        babyBody.style.backgroundColor = '#ffcccb';
-                        babyHead.style.backgroundColor = '#ffcccb';
-                        break;
-                }
                 
                 // Show result section
                 resultSection.style.display = 'block';
