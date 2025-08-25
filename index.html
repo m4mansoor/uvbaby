@@ -379,168 +379,6 @@
             text-align: center;
             animation: bounce 2s infinite;
         }
-        
-        /* Baby Character */
-        .baby-character {
-            position: relative;
-            width: 100%;
-            height: 160px;
-            margin: 20px 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .sun-radiation {
-            position: absolute;
-            width: 180px;
-            height: 180px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0) 70%);
-            animation: pulse 3s infinite;
-            z-index: -1;
-        }
-        
-        .baby-body {
-            position: relative;
-            width: 90px;
-            height: 110px;
-            background: #ffd1dc;
-            border-radius: 40px 40px 30px 30px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-        }
-        
-        .baby-head {
-            position: absolute;
-            top: -45px;
-            width: 70px;
-            height: 70px;
-            background: #ffd1dc;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: all 0.3s ease;
-        }
-        
-        .baby-face {
-            position: relative;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .baby-eye {
-            position: absolute;
-            width: 12px;
-            height: 12px;
-            background: #333;
-            border-radius: 50%;
-            top: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .baby-eye.left {
-            left: 10px;
-        }
-        
-        .baby-eye.right {
-            right: 10px;
-        }
-        
-        .baby-mouth {
-            position: absolute;
-            width: 25px;
-            height: 10px;
-            border-bottom: 2px solid #ff6b6b;
-            border-radius: 0 0 50% 50%;
-            bottom: 15px;
-            transition: all 0.3s ease;
-        }
-        
-        /* Expression States */
-        .happy {
-            .baby-mouth {
-                border-color: #ff6b6b;
-                transform: rotate(0deg);
-            }
-        }
-        
-        .cautious {
-            .baby-mouth {
-                border-color: #ff9a44;
-                transform: rotate(10deg);
-            }
-        }
-        
-        .worried {
-            .baby-mouth {
-                border-color: #ff6b6b;
-                transform: rotate(20deg);
-            }
-        }
-        
-        .serious {
-            .baby-mouth {
-                border-color: #ff6b6b;
-                transform: rotate(30deg);
-            }
-        }
-        
-        .scared {
-            .baby-mouth {
-                border-color: #8e44ad;
-                transform: rotate(45deg);
-            }
-        }
-        
-        /* Animated Background Elements */
-        .floating-cloud {
-            position: absolute;
-            width: 80px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            opacity: 0.8;
-            animation: floatCloud 10s infinite linear;
-            z-index: -1;
-        }
-        
-        .floating-cloud:nth-child(1) {
-            top: 20px;
-            left: 10%;
-            animation-delay: 0s;
-        }
-        
-        .floating-cloud:nth-child(2) {
-            top: 40px;
-            left: 30%;
-            animation-delay: 2s;
-        }
-        
-        .floating-cloud:nth-child(3) {
-            top: 60px;
-            left: 50%;
-            animation-delay: 4s;
-        }
-        
-        .floating-cloud:nth-child(4) {
-            top: 80px;
-            left: 70%;
-            animation-delay: 6s;
-        }
-        
-        @keyframes floatCloud {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-100px); }
-        }
     </style>
 </head>
 <body>
@@ -585,10 +423,6 @@
                 <div class="uv-level" id="uvLevel">Low</div>
             </div>
             
-            <div class="progress-container">
-                <div class="progress-bar" id="progressBar"></div>
-            </div>
-            
             <div class="safety-advice">
                 <h3>For Your Newborn:</h3>
                 <div class="advice-item">
@@ -625,11 +459,10 @@
             const errorElement = document.getElementById('error');
             const loadingElement = document.getElementById('loading');
             const locationDisplayElement = document.getElementById('locationDisplay');
-            const progressBar = document.getElementById('progressBar');
             const emojiDisplay = document.getElementById('emojiDisplay');
             
             // Replace with your OpenWeatherMap API key
-            const API_KEY = 'ee24c0e698aa7bd4d929b21821e318f9'; // <<<< REPLACE THIS WITH YOUR ACTUAL API KEY
+            const API_KEY = 'ee24c0e698aa7bd4d929b21821e318f9'; // Consider using environment variables for production
             
             // Event listeners
             getLocationBtn.addEventListener('click', getLocation);
@@ -669,21 +502,32 @@
                 fetchUVDataByCity(city, country);
             }
             
-            // Fetch UV data by coordinates using OpenWeatherMap
+            // Fetch UV data by coordinates - FIXED VERSION
             function fetchUVDataByCoords(lat, lon) {
-                const url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`;
+                // First get location name for display
+                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
                 
-                fetch(url)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Failed to fetch UV data');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Extract UV index from response (OpenWeatherMap includes it in current weather)
-                        const uvIndex = data.uvi || 0;
-                        displayResult(uvIndex, data.name, data.sys.country);
+                fetch(weatherUrl)
+                    .then(response => response.json())
+                    .then(weatherData => {
+                        const cityName = weatherData.name;
+                        const countryName = weatherData.sys.country;
+                        
+                        // Now fetch UV data using the UV Index API
+                        const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+                        
+                        return fetch(uvUrl)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to fetch UV data');
+                                }
+                                return response.json();
+                            })
+                            .then(uvData => {
+                                // UV Index API returns the value directly in 'value' field
+                                const uvIndex = uvData.value || 0;
+                                displayResult(uvIndex, cityName, countryName);
+                            });
                     })
                     .catch(error => {
                         showError('Error fetching UV data. Please try again later.');
@@ -692,29 +536,46 @@
                     });
             }
             
-            // Fetch UV data by city name
+            // Fetch UV data by city name - FIXED VERSION
             function fetchUVDataByCity(city, country) {
-                let url = `https://api.openweathermap.org/data/2.5/weather?q=${city}`;
+                let weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}`;
                 if (country) {
-                    url += `,${country}`;
+                    weatherUrl += `,${country}`;
                 }
-                url += `&appid=${API_KEY}&units=metric`;
+                weatherUrl += `&appid=${API_KEY}`;
                 
-                fetch(url)
+                fetch(weatherUrl)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('City not found');
                         }
                         return response.json();
                     })
-                    .then(data => {
-                        const uvIndex = data.uvi || 0;
-                        const cityName = data.name;
-                        const countryName = data.sys.country;
-                        displayResult(uvIndex, cityName, countryName);
+                    .then(weatherData => {
+                        const lat = weatherData.coord.lat;
+                        const lon = weatherData.coord.lon;
+                        const cityName = weatherData.name;
+                        const countryName = weatherData.sys.country;
+                        
+                        // Now fetch UV data using coordinates
+                        const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+                        
+                        return fetch(uvUrl)
+                            .then(response => {
+                                if (!response.ok) {
+                                    throw new Error('Failed to fetch UV data');
+                                }
+                                return response.json();
+                            })
+                            .then(uvData => {
+                                // UV Index API returns the value directly in 'value' field
+                                const uvIndex = uvData.value || 0;
+                                displayResult(uvIndex, cityName, countryName);
+                            });
                     })
                     .catch(error => {
-                        showError('City not found. Please check the name and try again.');
+                        showError('City not found or error fetching UV data. Please check the name and try again.');
+                        console.error('Error:', error);
                         showLoading(false);
                     });
             }
@@ -766,10 +627,6 @@
                 emojiDisplay.textContent = emoji;
                 emojiDisplay.title = statusText;
                 
-                // Animate progress bar
-                const progressPercentage = Math.min(100, uvIndex * 8.33); // Scale to 12 max
-                progressBar.style.width = `${progressPercentage}%`;
-                
                 // Show result section
                 resultSection.style.display = 'block';
                 showLoading(false);
@@ -817,14 +674,6 @@
                     element.style.transform = 'scale(1)';
                 });
             });
-            
-            // Add floating clouds
-            const container = document.querySelector('.container');
-            for (let i = 1; i <= 4; i++) {
-                const cloud = document.createElement('div');
-                cloud.classList.add('floating-cloud');
-                container.appendChild(cloud);
-            }
         });
     </script>
 </body>
