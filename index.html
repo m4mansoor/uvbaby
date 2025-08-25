@@ -108,86 +108,101 @@
         
         /* Location Section */
         .location-section {
-            padding: 25px;
+            padding: 40px 25px;
             background: #f8f9fa;
+            text-align: center;
         }
         
         .section-title {
-            text-align: center;
             color: var(--dark);
-            margin-bottom: 20px;
-            font-size: 22px;
+            margin-bottom: 30px;
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+        }
+        
+        .location-description {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.5;
         }
         
         .location-btn {
             background: linear-gradient(90deg, var(--secondary), var(--accent));
             color: white;
             border: none;
-            padding: 16px;
+            padding: 20px 30px;
             border-radius: 15px;
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 600;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 15px;
             width: 100%;
-            box-shadow: 0 5px 15px rgba(78, 205, 196, 0.3);
+            max-width: 350px;
+            margin: 0 auto;
+            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.4);
             transition: all 0.3s ease;
-            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .location-btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .location-btn:hover::before {
+            left: 100%;
         }
         
         .location-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(78, 205, 196, 0.4);
+            box-shadow: 0 12px 25px rgba(78, 205, 196, 0.5);
         }
         
         .location-btn:active {
-            transform: translateY(0);
+            transform: translateY(-1px);
         }
         
-        .manual-location {
+        .location-btn i {
+            font-size: 24px;
+            animation: pulse 2s infinite;
+        }
+        
+        /* Permission Info */
+        .permission-info {
+            background: #e8f4f8;
+            border: 1px solid var(--secondary);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 25px;
+            text-align: left;
+        }
+        
+        .permission-info h4 {
+            color: var(--dark);
+            margin-bottom: 10px;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            align-items: center;
+            gap: 8px;
         }
         
-        input {
-            padding: 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        input:focus {
-            border-color: var(--secondary);
-            outline: none;
-            box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.2);
-        }
-        
-        .check-btn {
-            background: linear-gradient(90deg, var(--primary), #ff8e8e);
-            color: white;
-            border: none;
-            padding: 16px;
-            border-radius: 12px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
-        }
-        
-        .check-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+        .permission-info p {
+            color: #555;
+            font-size: 14px;
+            line-height: 1.4;
         }
         
         /* Results Section */
@@ -205,6 +220,30 @@
             padding: 15px;
             background: #f0f9ff;
             border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .refresh-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            margin-left: 10px;
+        }
+        
+        .refresh-btn:hover {
+            transform: rotate(180deg);
+            background: var(--primary);
         }
         
         .uv-display {
@@ -213,14 +252,15 @@
             align-items: center;
             gap: 15px;
             margin: 25px 0;
-            padding: 20px;
+            padding: 25px;
             background: linear-gradient(135deg, #f0f9ff, #e6f7ff);
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            position: relative;
         }
         
         .uv-index {
-            font-size: 70px;
+            font-size: 80px;
             font-weight: 800;
             margin: 0;
             text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
@@ -235,11 +275,66 @@
             letter-spacing: 1px;
         }
         
+        /* UV Scale Visualization */
+        .uv-scale {
+            width: 100%;
+            height: 12px;
+            background: linear-gradient(to right, 
+                #43e97b 0%, #43e97b 16.66%, 
+                #f9d423 16.66%, #f9d423 41.66%, 
+                #ff9a44 41.66%, #ff9a44 58.33%, 
+                #ff6b6b 58.33%, #ff6b6b 83.33%, 
+                #8e44ad 83.33%, #8e44ad 100%);
+            border-radius: 6px;
+            margin: 15px 0;
+            position: relative;
+        }
+        
+        .uv-indicator {
+            position: absolute;
+            top: -5px;
+            width: 6px;
+            height: 22px;
+            background: white;
+            border: 2px solid var(--dark);
+            border-radius: 3px;
+            transition: left 0.3s ease;
+        }
+        
         .low { color: #43e97b; }
         .moderate { color: #f9d423; }
         .high { color: #ff9a44; }
         .very-high { color: #ff6b6b; }
         .extreme { color: #8e44ad; }
+        
+        .emoji-display {
+            font-size: 80px;
+            margin: 20px 0;
+            text-align: center;
+            animation: bounce 2s infinite;
+        }
+        
+        /* Current Time Display */
+        .time-info {
+            text-align: center;
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .current-time {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .peak-hours {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
         
         .safety-advice {
             background: white;
@@ -281,7 +376,7 @@
         
         /* Status Messages */
         .error, .loading {
-            padding: 20px;
+            padding: 30px 20px;
             border-radius: 15px;
             margin: 20px;
             text-align: center;
@@ -303,10 +398,10 @@
             border: 4px solid rgba(0,0,0,0.1);
             border-radius: 50%;
             border-top: 4px solid var(--primary);
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
+            margin: 0 auto 20px;
         }
         
         /* Animations */
@@ -333,11 +428,16 @@
         /* Footer */
         .footer {
             text-align: center;
-            padding: 20px;
+            padding: 25px;
             color: #7f8c8d;
             font-size: 14px;
             background: #f8f9fa;
             border-top: 1px solid #eee;
+        }
+        
+        .footer h3 {
+            color: var(--dark);
+            margin-bottom: 5px;
         }
         
         /* Mobile Responsive */
@@ -360,24 +460,21 @@
             }
             
             .location-section, .result-section {
-                padding: 20px 15px;
+                padding: 30px 20px;
             }
             
             .uv-index {
-                font-size: 60px;
+                font-size: 70px;
             }
             
             .uv-level {
                 font-size: 22px;
             }
-        }
-        
-        /* Emoji Display */
-        .emoji-display {
-            font-size: 80px;
-            margin: 20px 0;
-            text-align: center;
-            animation: bounce 2s infinite;
+            
+            .location-btn {
+                padding: 18px 25px;
+                font-size: 18px;
+            }
         }
     </style>
 </head>
@@ -385,7 +482,7 @@
     <div class="container">
         <div class="header">
             <div class="logo-container">
-                <div class="baby-icon interactive-element">
+                <div class="baby-icon">
                     <i class="fas fa-baby"></i>
                 </div>
                 <h1>BabySafe UV</h1>
@@ -394,15 +491,29 @@
         </div>
         
         <div class="location-section">
-            <h2 class="section-title"><i class="fas fa-map-marker-alt"></i> Where are you?</h2>
-            <button class="location-btn interactive-element" id="getLocationBtn">
-                <i class="fas fa-location-arrow"></i> Use My Location
+            <h2 class="section-title">
+                <i class="fas fa-sun"></i> 
+                Check UV Safety Now
+            </h2>
+            
+            <p class="location-description">
+                Get instant UV index data for your current location to keep your baby safe from harmful sun exposure.
+            </p>
+            
+            <button class="location-btn" id="getLocationBtn">
+                <i class="fas fa-location-arrow"></i>
+                Get My Location & Check UV
             </button>
             
-            <div class="manual-location">
-                <input type="text" id="cityInput" placeholder="Enter city (e.g. New York)">
-                <input type="text" id="countryInput" placeholder="Country code (e.g. US)">
-                <button class="check-btn interactive-element" id="checkBtn">Check UV Index</button>
+            <div class="permission-info">
+                <h4>
+                    <i class="fas fa-info-circle"></i>
+                    Location Permission
+                </h4>
+                <p>
+                    We need your location to provide accurate UV index data for your area. 
+                    Your location is only used to fetch weather data and is not stored or shared.
+                </p>
             </div>
         </div>
         
@@ -410,21 +521,36 @@
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Checking UV levels for your baby...</p>
+            <p><strong>Checking UV levels for your baby...</strong></p>
+            <p>Getting your location and fetching current UV data</p>
         </div>
         
         <div class="result-section" id="resultSection">
-            <div class="location-display" id="locationDisplay">New York, US</div>
+            <div class="location-display" id="locationDisplay">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>New York, US</span>
+                <button class="refresh-btn" id="refreshBtn" title="Refresh UV Data">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+            
+            <div class="time-info">
+                <div class="current-time" id="currentTime">Loading time...</div>
+                <div class="peak-hours">Peak UV hours: 10:00 AM - 4:00 PM</div>
+            </div>
             
             <div class="emoji-display" id="emojiDisplay">😊</div>
             
             <div class="uv-display">
                 <div class="uv-index" id="uvIndex">0.0</div>
                 <div class="uv-level" id="uvLevel">Low</div>
+                <div class="uv-scale">
+                    <div class="uv-indicator" id="uvIndicator"></div>
+                </div>
             </div>
             
             <div class="safety-advice">
-                <h3>For Your Newborn:</h3>
+                <h3>👶 For Your Baby:</h3>
                 <div class="advice-item">
                     <i class="fas fa-baby"></i>
                     <div id="safetyAdvice">Generally safe with minimal exposure. Protect with shade and clothing.</div>
@@ -437,78 +563,120 @@
                     <i class="fas fa-clock"></i>
                     <div>Avoid direct sun between 10 AM - 4 PM</div>
                 </div>
+                <div class="advice-item">
+                    <i class="fas fa-hat-cowboy"></i>
+                    <div id="clothingAdvice">Wide-brimmed hat and long sleeves recommended</div>
+                </div>
             </div>
         </div>
         
         <div class="footer">
             <h3>By Inaamul Haq Mansoor</h3>
             <p>Made with ❤️ for your little ones</p>
+            <p>Always consult your pediatrician for sun safety advice</p>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const getLocationBtn = document.getElementById('getLocationBtn');
-            const checkBtn = document.getElementById('checkBtn');
-            const cityInput = document.getElementById('cityInput');
-            const countryInput = document.getElementById('countryInput');
+            const refreshBtn = document.getElementById('refreshBtn');
             const resultSection = document.getElementById('resultSection');
             const uvIndexElement = document.getElementById('uvIndex');
             const uvLevelElement = document.getElementById('uvLevel');
             const safetyAdviceElement = document.getElementById('safetyAdvice');
+            const clothingAdviceElement = document.getElementById('clothingAdvice');
             const errorElement = document.getElementById('error');
             const loadingElement = document.getElementById('loading');
             const locationDisplayElement = document.getElementById('locationDisplay');
             const emojiDisplay = document.getElementById('emojiDisplay');
+            const currentTimeElement = document.getElementById('currentTime');
+            const uvIndicator = document.getElementById('uvIndicator');
+            
+            let currentLocation = null;
             
             // Replace with your OpenWeatherMap API key
-            const API_KEY = 'ee24c0e698aa7bd4d929b21821e318f9'; // Consider using environment variables for production
+            const API_KEY = 'ee24c0e698aa7bd4d929b21821e318f9';
             
             // Event listeners
             getLocationBtn.addEventListener('click', getLocation);
-            checkBtn.addEventListener('click', checkUVIndex);
+            refreshBtn.addEventListener('click', refreshData);
+            
+            // Update current time
+            function updateCurrentTime() {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString([], {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                });
+                currentTimeElement.textContent = `Current time: ${timeString}`;
+            }
             
             // Get user's current location
             function getLocation() {
                 if (navigator.geolocation) {
                     showLoading(true);
+                    
+                    const options = {
+                        enableHighAccuracy: true,
+                        timeout: 10000,
+                        maximumAge: 300000 // 5 minutes cache
+                    };
+                    
                     navigator.geolocation.getCurrentPosition(
                         position => {
                             const lat = position.coords.latitude;
                             const lon = position.coords.longitude;
+                            currentLocation = { lat, lon };
                             fetchUVDataByCoords(lat, lon);
                         },
                         error => {
-                            showError('Unable to retrieve your location. Please enter location manually.');
+                            let errorMessage = 'Unable to retrieve your location. ';
+                            switch(error.code) {
+                                case error.PERMISSION_DENIED:
+                                    errorMessage += 'Please allow location access and try again.';
+                                    break;
+                                case error.POSITION_UNAVAILABLE:
+                                    errorMessage += 'Location information is unavailable.';
+                                    break;
+                                case error.TIMEOUT:
+                                    errorMessage += 'Location request timed out. Please try again.';
+                                    break;
+                                default:
+                                    errorMessage += 'An unknown error occurred.';
+                                    break;
+                            }
+                            showError(errorMessage);
                             showLoading(false);
-                        }
+                        },
+                        options
                     );
                 } else {
-                    showError('Geolocation is not supported by this browser.');
+                    showError('Geolocation is not supported by this browser. Please use a modern browser and try again.');
                 }
             }
             
-            // Check UV index with manual location
-            function checkUVIndex() {
-                const city = cityInput.value.trim();
-                const country = countryInput.value.trim();
-                
-                if (!city) {
-                    showError('Please enter a city name');
-                    return;
+            // Refresh UV data
+            function refreshData() {
+                if (currentLocation) {
+                    showLoading(true);
+                    fetchUVDataByCoords(currentLocation.lat, currentLocation.lon);
                 }
-                
-                showLoading(true);
-                fetchUVDataByCity(city, country);
             }
             
-            // Fetch UV data by coordinates - FIXED VERSION
+            // Fetch UV data by coordinates
             function fetchUVDataByCoords(lat, lon) {
                 // First get location name for display
                 const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
                 
                 fetch(weatherUrl)
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Weather API error: ${response.status}`);
+                        }
+                        return response.json();
+                    })
                     .then(weatherData => {
                         const cityName = weatherData.name;
                         const countryName = weatherData.sys.country;
@@ -519,7 +687,7 @@
                         return fetch(uvUrl)
                             .then(response => {
                                 if (!response.ok) {
-                                    throw new Error('Failed to fetch UV data');
+                                    throw new Error(`UV API error: ${response.status}`);
                                 }
                                 return response.json();
                             })
@@ -530,52 +698,8 @@
                             });
                     })
                     .catch(error => {
-                        showError('Error fetching UV data. Please try again later.');
                         console.error('Error:', error);
-                        showLoading(false);
-                    });
-            }
-            
-            // Fetch UV data by city name - FIXED VERSION
-            function fetchUVDataByCity(city, country) {
-                let weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}`;
-                if (country) {
-                    weatherUrl += `,${country}`;
-                }
-                weatherUrl += `&appid=${API_KEY}`;
-                
-                fetch(weatherUrl)
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('City not found');
-                        }
-                        return response.json();
-                    })
-                    .then(weatherData => {
-                        const lat = weatherData.coord.lat;
-                        const lon = weatherData.coord.lon;
-                        const cityName = weatherData.name;
-                        const countryName = weatherData.sys.country;
-                        
-                        // Now fetch UV data using coordinates
-                        const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
-                        
-                        return fetch(uvUrl)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error('Failed to fetch UV data');
-                                }
-                                return response.json();
-                            })
-                            .then(uvData => {
-                                // UV Index API returns the value directly in 'value' field
-                                const uvIndex = uvData.value || 0;
-                                displayResult(uvIndex, cityName, countryName);
-                            });
-                    })
-                    .catch(error => {
-                        showError('City not found or error fetching UV data. Please check the name and try again.');
-                        console.error('Error:', error);
+                        showError('Error fetching UV data. Please check your internet connection and try again.');
                         showLoading(false);
                     });
             }
@@ -583,49 +707,63 @@
             // Display the result
             function displayResult(uvIndex, cityName, countryName) {
                 // Determine UV level and advice
-                let level, advice, colorClass, emoji, statusText;
+                let level, advice, clothingAdvice, colorClass, emoji, statusText;
                 
                 if (uvIndex <= 2) {
                     level = "Low";
-                    advice = "Generally safe for newborns with minimal exposure. Still, protect with shade and clothing.";
+                    advice = "Safe for newborns with minimal protection. Still keep baby in shade when possible.";
+                    clothingAdvice = "Light clothing and sun hat sufficient";
                     colorClass = "low";
-                    emoji = "😊"; // Happy face
-                    statusText = "Healthy";
+                    emoji = "😊";
+                    statusText = "Safe";
                 } else if (uvIndex <= 5) {
                     level = "Moderate";
-                    advice = "Take precautions. Limit direct sun exposure. Keep baby in shade when possible.";
+                    advice = "Take precautions. Limit direct sun exposure and keep baby in shade.";
+                    clothingAdvice = "Long sleeves, pants, and wide-brimmed hat recommended";
                     colorClass = "moderate";
-                    emoji = "🙂"; // Slightly smiling face
-                    statusText = "Safe";
+                    emoji = "🙂";
+                    statusText = "Caution";
                 } else if (uvIndex <= 7) {
                     level = "High";
-                    advice = "Protection required. Avoid direct sun exposure. Keep baby in complete shade.";
+                    advice = "Protection required. Avoid direct sun exposure completely.";
+                    clothingAdvice = "Full sun protection clothing, hat, and sunglasses essential";
                     colorClass = "high";
-                    emoji = "😐"; // Neutral face
+                    emoji = "😐";
                     statusText = "Unsafe";
                 } else if (uvIndex <= 10) {
                     level = "Very High";
-                    advice = "Extra protection needed. Avoid direct sunlight completely. Stay indoors if possible.";
+                    advice = "Extra protection needed. Stay indoors during peak hours (10 AM - 4 PM).";
+                    clothingAdvice = "Complete sun protection required - consider staying indoors";
                     colorClass = "very-high";
-                    emoji = "😟"; // Worried face
-                    statusText = "Bad";
+                    emoji = "😟";
+                    statusText = "Dangerous";
                 } else {
                     level = "Extreme";
-                    advice = "Dangerous UV levels. Keep baby indoors. No direct sun exposure at all.";
+                    advice = "Dangerous UV levels. Keep baby indoors. No outdoor activities recommended.";
+                    clothingAdvice = "Stay indoors - UV levels too high for baby exposure";
                     colorClass = "extreme";
-                    emoji = "😨"; // Fearful face
-                    statusText = "Worst";
+                    emoji = "😨";
+                    statusText = "Extreme";
                 }
                 
                 // Update UI
-                locationDisplayElement.textContent = `${cityName}, ${countryName}`;
+                locationDisplayElement.querySelector('span').textContent = `${cityName}, ${countryName}`;
                 uvIndexElement.textContent = uvIndex.toFixed(1);
                 uvIndexElement.className = `uv-index ${colorClass}`;
                 uvLevelElement.textContent = level;
                 uvLevelElement.className = `uv-level ${colorClass}`;
                 safetyAdviceElement.textContent = advice;
+                clothingAdviceElement.textContent = clothingAdvice;
                 emojiDisplay.textContent = emoji;
                 emojiDisplay.title = statusText;
+                
+                // Update UV scale indicator
+                const indicatorPosition = Math.min(100, (uvIndex / 12) * 100);
+                uvIndicator.style.left = `calc(${indicatorPosition}% - 3px)`;
+                
+                // Update time
+                updateCurrentTime();
+                setInterval(updateCurrentTime, 60000); // Update every minute
                 
                 // Show result section
                 resultSection.style.display = 'block';
@@ -633,15 +771,20 @@
                 
                 // Add animation to result
                 resultSection.animate([
-                    { transform: 'translateY(20px)', opacity: 0 },
+                    { transform: 'translateY(30px)', opacity: 0 },
                     { transform: 'translateY(0)', opacity: 1 }
                 ], {
-                    duration: 500,
+                    duration: 600,
                     easing: 'ease-out'
                 });
                 
-                // Scroll to results
-                resultSection.scrollIntoView({ behavior: 'smooth' });
+                // Scroll to results smoothly
+                setTimeout(() => {
+                    resultSection.scrollIntoView({ 
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
             }
             
             // Show/hide loading indicator
@@ -663,16 +806,18 @@
                 showLoading(false);
             }
             
-            // Add interactive animations
-            const interactiveElements = document.querySelectorAll('.interactive-element');
-            interactiveElements.forEach(element => {
-                element.addEventListener('mouseenter', () => {
-                    element.style.transform = 'scale(1.03)';
-                });
-                
-                element.addEventListener('mouseleave', () => {
-                    element.style.transform = 'scale(1)';
-                });
+            // Add button hover effects
+            const buttons = [getLocationBtn, refreshBtn];
+            buttons.forEach(button => {
+                if (button) {
+                    button.addEventListener('mouseenter', () => {
+                        button.style.transform = button === refreshBtn ? 'rotate(180deg) scale(1.1)' : 'translateY(-3px) scale(1.02)';
+                    });
+                    
+                    button.addEventListener('mouseleave', () => {
+                        button.style.transform = 'translateY(0) scale(1) rotate(0deg)';
+                    });
+                }
             });
         });
     </script>
