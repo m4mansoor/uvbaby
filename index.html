@@ -246,6 +246,35 @@
             background: var(--primary);
         }
         
+        /* Weather Info */
+        .weather-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .weather-detail {
+            text-align: center;
+        }
+        
+        .weather-detail .value {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .weather-detail .label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+        
         .uv-display {
             display: flex;
             flex-direction: column;
@@ -475,6 +504,16 @@
                 padding: 18px 25px;
                 font-size: 18px;
             }
+            
+            .weather-info {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            
+            .weather-detail {
+                flex: 1;
+                min-width: 80px;
+            }
         }
     </style>
 </head>
@@ -528,10 +567,29 @@
         <div class="result-section" id="resultSection">
             <div class="location-display" id="locationDisplay">
                 <i class="fas fa-map-marker-alt"></i>
-                <span>New York, US</span>
+                <span>Loading location...</span>
                 <button class="refresh-btn" id="refreshBtn" title="Refresh UV Data">
                     <i class="fas fa-sync-alt"></i>
                 </button>
+            </div>
+            
+            <div class="weather-info" id="weatherInfo">
+                <div class="weather-detail">
+                    <div class="value" id="temperature">--°C</div>
+                    <div class="label">Temperature</div>
+                </div>
+                <div class="weather-detail">
+                    <div class="value" id="humidity">--%</div>
+                    <div class="label">Humidity</div>
+                </div>
+                <div class="weather-detail">
+                    <div class="value" id="cloudCover">--%</div>
+                    <div class="label">Clouds</div>
+                </div>
+                <div class="weather-detail">
+                    <div class="value" id="windSpeed">-- km/h</div>
+                    <div class="label">Wind</div>
+                </div>
             </div>
             
             <div class="time-info">
@@ -593,7 +651,14 @@
             const currentTimeElement = document.getElementById('currentTime');
             const uvIndicator = document.getElementById('uvIndicator');
             
+            // Weather info elements
+            const temperatureElement = document.getElementById('temperature');
+            const humidityElement = document.getElementById('humidity');
+            const cloudCoverElement = document.getElementById('cloudCover');
+            const windSpeedElement = document.getElementById('windSpeed');
+            
             let currentLocation = null;
+            let timeUpdateInterval = null;
             
             // Replace with your OpenWeatherMap API key
             const API_KEY = 'ee24c0e698aa7bd4d929b21821e318f9';
@@ -610,7 +675,18 @@
                     minute: '2-digit',
                     hour12: true
                 });
-                currentTimeElement.textContent = `Current time: ${timeString}`;
+                const dateString = now.toLocaleDateString();
+                currentTimeElement.textContent = `${dateString} at ${timeString}`;
+            }
+            
+            // Fetch with timeout protection
+            function fetchWithTimeout(url, timeout = 10000) {
+                return Promise.race([
+                    fetch(url),
+                    new Promise((_, reject) =>
+                        setTimeout(() => reject(new Error('Request timeout')), timeout)
+                    )
+                ]);
             }
             
             // Get user's current location
@@ -620,7 +696,7 @@
                     
                     const options = {
                         enableHighAccuracy: true,
-                        timeout: 10000,
+                        timeout: 15000,
                         maximumAge: 300000 // 5 minutes cache
                     };
                     
@@ -635,16 +711,16 @@
                             let errorMessage = 'Unable to retrieve your location. ';
                             switch(error.code) {
                                 case error.PERMISSION_DENIED:
-                                    errorMessage += 'Please allow location access and try again.';
+                                    errorMessage += 'Please allow location access in your browser settings and try again.';
                                     break;
                                 case error.POSITION_UNAVAILABLE:
-                                    errorMessage += 'Location information is unavailable.';
+                                    errorMessage += 'Location information is unavailable. Please try again.';
                                     break;
                                 case error.TIMEOUT:
                                     errorMessage += 'Location request timed out. Please try again.';
                                     break;
                                 default:
-                                    errorMessage += 'An unknown error occurred.';
+                                    errorMessage += 'An unknown error occurred. Please try again.';
                                     break;
                             }
                             showError(errorMessage);
@@ -653,59 +729,85 @@
                         options
                     );
                 } else {
-                    showError('Geolocation is not supported by this browser. Please use a modern browser and try again.');
+                    showError('Geolocation is not supported by this browser. Please use a modern browser like Chrome, Firefox, or Safari.');
                 }
             }
             
             // Refresh UV data
             function refreshData() {
                 if (currentLocation) {
+                    refreshBtn.style.transform = 'rotate(360deg)';
                     showLoading(true);
                     fetchUVDataByCoords(currentLocation.lat, currentLocation.lon);
+                    setTimeout(() => {
+                        refreshBtn.style.transform = 'rotate(0deg)';
+                    }, 500);
                 }
             }
             
-            // Fetch UV data by coordinates
+            // Fetch UV data using One Call API 3.0 - IMPROVED VERSION
             function fetchUVDataByCoords(lat, lon) {
-                // First get location name for display
-                const weatherUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+                // Use One Call API 3.0 for faster response and more data
+                const oneCallUrl = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric&exclude=minutely,alerts`;
                 
-                fetch(weatherUrl)
+                console.log('Fetching UV data from:', oneCallUrl.replace(API_KEY, 'API_KEY_HIDDEN'));
+                
+                fetchWithTimeout(oneCallUrl, 15000)
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error(`Weather API error: ${response.status}`);
+                            if (response.status === 401) {
+                                throw new Error('Invalid API key. Please check your OpenWeatherMap API key.');
+                            } else if (response.status === 429) {
+                                throw new Error('API rate limit exceeded. Please try again in a few minutes.');
+                            } else {
+                                throw new Error(`API error: ${response.status} - ${response.statusText}`);
+                            }
                         }
                         return response.json();
                     })
-                    .then(weatherData => {
-                        const cityName = weatherData.name;
-                        const countryName = weatherData.sys.country;
+                    .then(data => {
+                        console.log('API Response received:', data);
                         
-                        // Now fetch UV data using the UV Index API
-                        const uvUrl = `https://api.openweathermap.org/data/2.5/uvi?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+                        // Extract UV index and other weather data
+                        const uvIndex = data.current?.uvi ?? 0;
+                        const temperature = Math.round(data.current?.temp ?? 0);
+                        const humidity = data.current?.humidity ?? 0;
+                        const cloudCover = data.current?.clouds ?? 0;
+                        const windSpeed = Math.round((data.current?.wind_speed ?? 0) * 3.6); // Convert m/s to km/h
                         
-                        return fetch(uvUrl)
-                            .then(response => {
-                                if (!response.ok) {
-                                    throw new Error(`UV API error: ${response.status}`);
-                                }
-                                return response.json();
-                            })
-                            .then(uvData => {
-                                // UV Index API returns the value directly in 'value' field
-                                const uvIndex = uvData.value || 0;
-                                displayResult(uvIndex, cityName, countryName);
-                            });
+                        // Extract location name from timezone or use coordinates
+                        let locationName = 'Unknown Location';
+                        if (data.timezone) {
+                            locationName = data.timezone.replace(/_/g, ' ').split('/').pop() || 'Unknown Location';
+                        } else {
+                            locationName = `${lat.toFixed(2)}°, ${lon.toFixed(2)}°`;
+                        }
+                        
+                        displayResult(uvIndex, locationName, temperature, humidity, cloudCover, windSpeed);
                     })
                     .catch(error => {
-                        console.error('Error:', error);
-                        showError('Error fetching UV data. Please check your internet connection and try again.');
+                        console.error('Error fetching UV data:', error);
+                        
+                        let errorMessage = 'Error fetching UV data. ';
+                        if (error.message.includes('timeout')) {
+                            errorMessage += 'Request timed out. Please check your internet connection and try again.';
+                        } else if (error.message.includes('API key')) {
+                            errorMessage += 'API configuration issue. Please contact support.';
+                        } else if (error.message.includes('rate limit')) {
+                            errorMessage += 'Too many requests. Please wait a few minutes and try again.';
+                        } else {
+                            errorMessage += 'Please check your internet connection and try again.';
+                        }
+                        
+                        showError(errorMessage);
                         showLoading(false);
                     });
             }
             
-            // Display the result
-            function displayResult(uvIndex, cityName, countryName) {
+            // Display the result with weather data
+            function displayResult(uvIndex, locationName, temperature, humidity, cloudCover, windSpeed) {
+                console.log('Displaying result:', { uvIndex, locationName, temperature, humidity, cloudCover, windSpeed });
+                
                 // Determine UV level and advice
                 let level, advice, clothingAdvice, colorClass, emoji, statusText;
                 
@@ -746,8 +848,8 @@
                     statusText = "Extreme";
                 }
                 
-                // Update UI
-                locationDisplayElement.querySelector('span').textContent = `${cityName}, ${countryName}`;
+                // Update UV UI
+                locationDisplayElement.querySelector('span').textContent = locationName;
                 uvIndexElement.textContent = uvIndex.toFixed(1);
                 uvIndexElement.className = `uv-index ${colorClass}`;
                 uvLevelElement.textContent = level;
@@ -757,13 +859,20 @@
                 emojiDisplay.textContent = emoji;
                 emojiDisplay.title = statusText;
                 
+                // Update weather info
+                temperatureElement.textContent = `${temperature}°C`;
+                humidityElement.textContent = `${humidity}%`;
+                cloudCoverElement.textContent = `${cloudCover}%`;
+                windSpeedElement.textContent = `${windSpeed} km/h`;
+                
                 // Update UV scale indicator
                 const indicatorPosition = Math.min(100, (uvIndex / 12) * 100);
                 uvIndicator.style.left = `calc(${indicatorPosition}% - 3px)`;
                 
-                // Update time
+                // Update time and start interval
                 updateCurrentTime();
-                setInterval(updateCurrentTime, 60000); // Update every minute
+                if (timeUpdateInterval) clearInterval(timeUpdateInterval);
+                timeUpdateInterval = setInterval(updateCurrentTime, 60000); // Update every minute
                 
                 // Show result section
                 resultSection.style.display = 'block';
@@ -811,13 +920,22 @@
             buttons.forEach(button => {
                 if (button) {
                     button.addEventListener('mouseenter', () => {
-                        button.style.transform = button === refreshBtn ? 'rotate(180deg) scale(1.1)' : 'translateY(-3px) scale(1.02)';
+                        if (button === refreshBtn) {
+                            button.style.transform = 'rotate(180deg) scale(1.1)';
+                        } else {
+                            button.style.transform = 'translateY(-3px) scale(1.02)';
+                        }
                     });
                     
                     button.addEventListener('mouseleave', () => {
                         button.style.transform = 'translateY(0) scale(1) rotate(0deg)';
                     });
                 }
+            });
+            
+            // Cleanup interval on page unload
+            window.addEventListener('beforeunload', () => {
+                if (timeUpdateInterval) clearInterval(timeUpdateInterval);
             });
         });
     </script>
